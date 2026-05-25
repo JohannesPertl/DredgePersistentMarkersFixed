@@ -1,0 +1,49 @@
+name: Build mod artifact
+
+on:
+  push:
+    branches:
+      - verify-build
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Clean
+        shell: pwsh
+        run: |
+          Remove-Item -Recurse -Force bin,obj -ErrorAction SilentlyContinue
+
+      - name: Restore and build
+        shell: pwsh
+        run: |
+          msbuild PersistentMarkers.sln /restore /p:Configuration=Release
+
+      - name: Prepare mod package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force package/megapiggy.persistentmarkers | Out-Null
+          Copy-Item bin/PersistentMarkers.dll package/megapiggy.persistentmarkers/
+          Copy-Item bin/PersistentMarkers.pdb package/megapiggy.persistentmarkers/
+          Copy-Item bin/mod_meta.json package/megapiggy.persistentmarkers/
+          Compress-Archive -Path package/megapiggy.persistentmarkers/* -DestinationPath package/megapiggy.persistentmarkers.zip -Force
+
+      - name: Upload unpacked mod files
+        uses: actions/upload-artifact@v4
+        with:
+          name: megapiggy.persistentmarkers-files
+          path: package/megapiggy.persistentmarkers/
+
+      - name: Upload zipped mod package
+        uses: actions/upload-artifact@v4
+        with:
+          name: megapiggy.persistentmarkers-zip
+          path: package/megapiggy.persistentmarkers.zip
