@@ -1,7 +1,7 @@
 {
-  "Author": "MegaPiggy",
-  "Name": "Persistent Markers",
-  "ModGUID": "megapiggy.persistentmarkers",
+  "Author": "JohannesPertl",
+  "Name": "DredgePersistentMarkersFixed",
+  "ModGUID": "johannespertl.dredgepersistentmarkersfixed",
   "Entrypoint": "PersistentMarkers.Main/Initialize",
   "Version": "1.0",
   "ModAssembly": "PersistentMarkers.dll",
